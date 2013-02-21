@@ -239,8 +239,48 @@
   <Target Name="PrintConfig2">
     <PropertyGroup>
       <Configuration>Release</Configuration>
+      <OutputPath>$(Configuration)\dest\</OutputPath>
     </PropertyGroup>
     <Message Text="Config: $(Configuration)" />
+    <Message Text="OutputPath: $(OutputPath)" />
   </Target>
   <Target Name="CombinedText" DependsOnTargets="PrintConfig;PrintConfig2"></Target>
+
+  <!-- Modify metadata dynamically -->
+  <ItemGroup>
+    <Server Include="Server1">
+      <Type>2008</Type>
+      <Name>SRV01</Name>
+      <AdminContact>ABC</AdminContact>
+    </Server>
+    <Server Include="Server2">
+      <Type>2003</Type>
+      <Name>SVR02</Name>
+      <AdminContact>ABC1</AdminContact>
+    </Server>
+    <Server Include="Server3">
+      <Name>2008</Name>
+      <Type>SVR03</Type>
+      <AdminContact>ABC2</AdminContact>
+    </Server>
+  </ItemGroup>
+  <Target Name="PrintInfo">
+    <Message Text="%(Server.Identity) : %(Server.AdminContact)"/>
+    <Message Text=" " />
+    <Message Text="Overriding AdminContact" Importance="High"/>
+    <ItemGroup>
+      <Server Condition="'%(Server.AdminContact)'=='ABC1'">
+        <AdminContact>ABC3</AdminContact>
+      </Server>
+    </ItemGroup>
+    <Message Text="%(Server.Identity) : %(Server.AdminContact)" />
+    <Message Text=" "/>
+    <Message Text="Removing Item" Importance="High" />
+    <ItemGroup>
+      <Server Remove="Server2"/>
+    </ItemGroup>
+    <Message Text="%(Server.Identity) : %(Server.AdminContact)" />
+    <Message Text="Admin : @(Server->'%(AdminContact)')" />
+  </Target>
+
 </Project>
