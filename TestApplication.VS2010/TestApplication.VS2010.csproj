@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+		<Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+		<ProductVersion>8.0.30703</ProductVersion>
+		<SchemaVersion>2.0</SchemaVersion>
+		<ProjectGuid>{60DD1D90-3177-41D1-A921-EBABEBD2AE66}</ProjectGuid>
+		<OutputType>WinExe</OutputType>
+		<AppDesignerFolder>Properties</AppDesignerFolder>
+		<RootNamespace>TestApplication.VS2010</RootNamespace>
+		<AssemblyName>TestApplication.VS2010</AssemblyName>
+		<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+		<TargetFrameworkProfile>Client</TargetFrameworkProfile>
+		<FileAlignment>512</FileAlignment>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+		<PlatformTarget>x86</PlatformTarget>
+		<DebugSymbols>true</DebugSymbols>
+		<DebugType>full</DebugType>
+		<Optimize>false</Optimize>
+		<OutputPath>bin\Debug\</OutputPath>
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+		<ErrorReport>prompt</ErrorReport>
+		<WarningLevel>4</WarningLevel>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+		<PlatformTarget>x86</PlatformTarget>
+		<DebugType>pdbonly</DebugType>
+		<Optimize>true</Optimize>
+		<OutputPath>bin\Release\</OutputPath>
+		<DefineConstants>TRACE</DefineConstants>
+		<ErrorReport>prompt</ErrorReport>
+		<WarningLevel>4</WarningLevel>
+	</PropertyGroup>
+	<ItemGroup>
+		<Reference Include="System" />
+		<Reference Include="System.Core" />
+		<Reference Include="System.Xml.Linq" />
+		<Reference Include="System.Data.DataSetExtensions" />
+		<Reference Include="Microsoft.CSharp" />
+		<Reference Include="System.Data" />
+		<Reference Include="System.Deployment" />
+		<Reference Include="System.Drawing" />
+		<Reference Include="System.Windows.Forms" />
+		<Reference Include="System.Xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Include="Form1.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Form1.Designer.cs">
+			<DependentUpon>Form1.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Program.cs" />
+		<Compile Include="Properties\AssemblyInfo.cs" />
+		<EmbeddedResource Include="Properties\Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<Compile Include="Properties\Resources.Designer.cs">
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+		<None Include="Properties\Settings.settings">
+			<Generator>SettingsSingleFileGenerator</Generator>
+			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
+		</None>
+		<Compile Include="Properties\Settings.Designer.cs">
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Settings.settings</DependentUpon>
+			<DesignTimeSharedInput>True</DesignTimeSharedInput>
+		</Compile>
+	</ItemGroup>
+	<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+	<!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+
+	<!-- Msbuild example -->
+	<Target Name="MsBuildTaskDemo">
+		<Message Text="Inside MsBuildTaskDemo Target" />
+		<!--<Message Text="$(MSBuildProjectDirectory)\..\TestProject.VS2010\TestProject.VS2010.csproj" />-->
+		<MSBuild Projects="$(MSBuildProjectDirectory)\..\TestProject.VS2010\TestProject.VS2010.csproj" Targets="PrintMessage" />
+	</Target>
+
+	<!-- Passing properties to msbuild task -->
+	<Target Name="MsBuildPassingPropertiesDemo">
+		<Message Text="Inside MsBuildPassingPropertiesDemo Target" />
+		<MSBuild Projects="$(MsBuildProjectFullPath)" Targets="PrintMessage" Properties="SourceName=PrintMessage Target" />
+	</Target>
+	<Target Name="PrintMessage">
+		<Message Text="Hello MsBuild from: $(SourceName)" />
+	</Target>
+
+	<!-- Execute mstest while building the project -->
+	<PropertyGroup>
+		<TestProjectFullPath>$(MSBuildProjectDirectory)\..\TestProject.VS2010\TestProject.VS2010.csproj</TestProjectFullPath>
+		<TestProjectOutputFile>$(MSBuildProjectDirectory)\..\TestProject.VS2010\Bin\Debug\TestProject.VS2010.dll</TestProjectOutputFile>
+	</PropertyGroup>
+	<Target Name="MsTestExecuteTask">
+		<MSBuild Projects="$(TestProjectFullPath)" />
+		<Exec Command="mstest /testcontainer:&quot;$(TestProjectOutputFile)&quot;" Timeout="30000" />
+		<!--<Exec Command="mstest  /testcontainer:&quot;C:\Users\Abhishek Gopalan\Documents\Visual Studio 2010\Projects\MsBuild\TestProject.VS2010\bin\Debug\TestProject.VS2010.dll&quot;" />-->
+	</Target>
+	<Target Name="SuccessfulBuild" DependsOnTargets="MsTestExecuteTask">
+		<Message Text="Run after success test execution" />
+	</Target>
+</Project>
