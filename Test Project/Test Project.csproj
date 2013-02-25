@@ -283,4 +283,52 @@
     <Message Text="Admin : @(Server->'%(AdminContact)')" />
   </Target>
 
+  <!-- Copying output from bin to another folder after building the project -->
+  <PropertyGroup>
+    <BuildDependsOn>
+      $(BuildDependsOn)
+      CopyOutputFiles
+    </BuildDependsOn>
+    <OutputCopyFolder>$(MSBuildProjectDirectory)\CustomOutput\</OutputCopyFolder>
+  </PropertyGroup>
+  <Target Name="CopyOutputFiles">
+    <ItemGroup>
+      <OutputFiles Include="$(OutputPath)**\*" />
+    </ItemGroup>
+    <MakeDir Directories="$(OutputCopyFolder)" />
+    <Copy SourceFiles="@(OutputFiles)" DestinationFiles="@(OutputFiles->'$(OutputCopyFolder)%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+
+  <!-- Removing items that were build and copied. The clean up process -->
+  <PropertyGroup>
+    <SourceRoot>$(MSBuildProjectDirectory)\src\</SourceRoot>
+  </PropertyGroup>
+  <ItemGroup>
+    <SrcFiles Include="$(SourceRoot)**\*" />
+  </ItemGroup>
+  <Target Name="Build">
+    <Message Text="SrcFiles: @(SrcFiles)" />
+    <Message Text="Removing from to item" />
+    <ItemGroup>
+      <SrcFiles Remove="$(SourceRoot)sub\" />
+    </ItemGroup>
+    <Message Text="SrcFiles: @(SrcFiles)" />
+  </Target>
+
+  <!-- Importing targets example -->
+  <PropertyGroup>
+    <SourceRoot>$(MSBuildProjectDirectory)\src\</SourceRoot>
+    <Configuration>Debug</Configuration>
+  </PropertyGroup>
+  <ItemGroup>
+    <SourceFiles Include="$(SourceRoot)\*"/>
+  </ItemGroup>
+  <Import Project="$(MSBuildProjectDirectory)\imports1.target" />
+  <Target Name="PrintOutputPath">
+    <Message Text="OutputPath: $(OutputPath)" />
+    <Message Text="MSBuildProjectFile: $(MSBuildProjectFile)" />
+  </Target>
+  <Target Name="All" DependsOnTargets="PrintInfo;PrintOutputPath">
+    
+  </Target>
 </Project>
